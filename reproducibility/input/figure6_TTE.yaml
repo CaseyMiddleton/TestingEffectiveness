@@ -1,0 +1,38 @@
+log_name: figure6
+
+##### Kinetics
+  # kinetics_flu
+  # kinetics_sarscov2_founder_naive
+  # kinetics_sarscov2_omicron_experienced
+  # kinetics_rsv
+kinetics: [kinetics_sarscov2_omicron_experienced]
+
+##### Administration
+  # test_regular
+  # test_post_exposure
+  # test_post_symptoms
+testing: test_post_symptoms
+Q: 1
+wait: 1
+supply: [1,2]
+
+##### Diagnostic
+tat: 0
+L: 6
+f: 0.05
+
+##### Behavior
+c: 1.0
+
+##### Isolation Policy
+  # TTE
+  # fixed
+isolation: TTE
+wait_exit: 2
+Q_exit: 1
+L_exit: 6
+f_exit: 0.05
+
+##### Simulation
+N_draws: 100000
+T: 50

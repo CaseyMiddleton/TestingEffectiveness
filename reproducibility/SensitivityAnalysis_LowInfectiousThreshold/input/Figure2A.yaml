@@ -1,0 +1,38 @@
+log_name: Figure2A_LowInf
+
+##### Kinetics
+  # kinetics_flu
+  # kinetics_sarscov2_founder_naive
+  # kinetics_sarscov2_omicron_experienced
+  # kinetics_rsv
+kinetics: [kinetics_flu, kinetics_rsv, kinetics_sarscov2_omicron_experienced]
+
+##### Administration
+  # test_regular
+  # test_post_exposure
+  # test_post_symptoms
+testing: test_post_symptoms
+Q: 1
+wait: 0
+supply: 2
+
+##### Diagnostic
+tat: 0
+L: [6.5,5.5, 4.88,5.88, 4.5,5.5] # scv2_dec, scv2_inc, flu_dec, flu_inc, rsv_dec, rsv_inc
+f: 0.05
+
+##### Behavior
+c: 1.0
+
+##### Isolation Policy
+  # TTE
+  # fixed
+isolation: fixed
+wait_exit: 40
+Q_exit: 1
+L_exit: 6
+f_exit: 0.05
+
+##### Simulation
+N_draws: 10000
+T: 40
