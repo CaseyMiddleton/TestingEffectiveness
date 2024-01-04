@@ -5,10 +5,10 @@ The manuscript that this repository supports contains a number of results and fi
 2. Copy the two scripts `run_all_main.sh` and `run_all_supp.sh` into the base directory.
 3. Run both shell scripts by executing from the command line:
 ```
-./run_all_main.sh
-./run_all_supp.sh
+sh run_all_main.sh
+sh run_all_supp.sh
 ```
-4. Uncomment the desired figures in the `figures.py` main() function and run script from the reproducibility directory.
+4. Uncomment the desired figures in the `reproducibility/figures.py` main() function and run script from the commmand line.
 
 # Reproducing Area-Under-The-Curve Plots
 1. Open `visualize_a_simulation.ipynb` (which uses `viz_utils.py`) and run it from this directory. 
