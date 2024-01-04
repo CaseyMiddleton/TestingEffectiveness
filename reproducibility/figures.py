@@ -45,10 +45,8 @@ from prettyplotlib import *
 from stoch_params import *
 from viz_utils import *
 
-data_path = Path(__file__).parent.parent / 'output' # where to retrieve data 
-sim_path = Path(__file__).parent / 'fig_output' # where to save figure data
-fig_path = Path(__file__).parent / 'figs' # where to save figures
-
+sim_path = Path(__file__).parent.parent / 'output' # where to retrieve data from simulation runs
+data_path = Path(__file__).parent / 'fig_output' # where to save figure data
 
 # ------------------------------------------------------------------------------------------------------------
 # ---------------------------------- Figure Drivers ----------------------------------------------------
@@ -59,8 +57,8 @@ def main():
     # Draw_Fig2_supp_Asc()
     # Fig2_supp_curves_generate_data()
     # Draw_Fig2_supp_curves()     #- Ensemble curves for all Fig 1 testing scenarios
-    # Fig4_generate_data()
-    # Draw_Fig4_symp()            #- Reflex testing heatmaps - post-symptom
+    Fig4_generate_data()
+    Draw_Fig4_symp()            #- Reflex testing heatmaps - post-symptom
     # Draw_Fig4_BandW()           #- Reflex testing Black and White supplementary heatmaps - post-symptom
     # Fig4Supp_generate_data_Asc()
     # Draw_Fig4Supp_Asc()         # Reflex testing heatmaps - ascertainment
@@ -68,7 +66,7 @@ def main():
     # Fig5_generate_data()
     # Draw_Fig5()                 #- WT vs Omicron COVID
     # Fig6_generate_data()
-    Draw_Fig6()                 #- Cost-benefit of isolation policies
+    # Draw_Fig6()                 #- Cost-benefit of isolation policies
     # VL_samples()
     # VL_maintext()               #- Fig 3
     # sensitivity_Fig2_generate_data()
@@ -102,13 +100,23 @@ def get_kinetics_string(pathogen):
 
 def read_data(filename):
     # if pickle file exists, return data
-    if path.exists(filename / '.pkl'):
-        return pickle.load(open(filename / '.pkl','rb'))
+    if path.exists(str(filename) + '.pkl'):
+        return pickle.load(open(str(filename) + '.pkl','rb'))
     else:
         raise Exception("File {} does not exist".format(filename))
 def save_data(data,filename):
-    pickle.dump(data,open(filename / '.pkl','wb'))
+    # first check if directory exists yet, and create it of not
+    if not path.exists(filename.parent):
+        filename.parent.mkdir(parents=True, exist_ok=True)
+    # then write file to directory
+    pickle.dump(data,open(str(filename) + '.pkl','wb'))
 def save_txt(data,filename):
+    # first check if directory exists yet, and create it of not
+    print(filename.parent)
+    if not path.exists(filename.parent):
+        dir = Path(filename.parent)
+        dir.parent.mkdir(parents=True, exist_ok=True)
+    # then write file to directory
     file = open(filename / ".txt","w+")
     file.writelines(str(data))
     file.close()
@@ -194,7 +202,7 @@ def Fig2_generate_data():
         #     hashid = expt3['simulation'].values[0]
         #     fname = sim_path / hashid / ".zip"
         #     beta_0,beta_testing,CCDF_tDx,x,TE,asc = compute_curves(fname,p,t_max=max(get_fig2_tvals(path)))
-        #     fname = data_path / path / "_fig2_exp3_curves"
+        #     fname = data_path / str(path + "_fig2_exp3_curves")
         #     save_data([beta_0,beta_testing,CCDF_tDx],fname)
 
         #     # example panel - RSV
@@ -210,26 +218,26 @@ def Fig2_generate_data():
         #     hashid = exptn['simulation'].values[0]
         #     sim_fname = sim_path / hashid / ".zip"
         #     beta_0,beta_testing,CCDF_tDx,x,TE,asc = compute_curves(sim_fname,p,t_max=max(get_fig2_tvals(path)))
-        #     fname = data_path / path / "_fig2_expn_curves"
+        #     fname = data_path / str(path + "_fig2_expn_curves")
         #     save_data([beta_0,beta_testing,CCDF_tDx],fname)
         # # Plot Flu infectiousness curve - experiment 1
         # elif path == "FLU":
         #     hashid = expt1['simulation'].values[0]
         #     fname = sim_path / hashid / ".zip"
         #     beta_0,beta_testing,CCDF_tDx,x,TE,asc = compute_curves(fname,p,t_max=max(get_fig2_tvals(path)))
-        #     fname = data_path / path / "_fig2_exp1_curves"
+        #     fname = data_path / str(path + "_fig2_exp1_curves")
         #     save_data([beta_0,beta_testing,CCDF_tDx],fname)
         # # Plot COVID infectiousness curve  - experiment 2
         # elif path == "COVID":
         #     hashid = expt2['simulation'].values[0]
         #     fname = sim_path / hashid / ".zip"
         #     beta_0,beta_testing,CCDF_tDx,x,TE,asc = compute_curves(fname,p,t_max=max(get_fig2_tvals(path)))
-        #     fname = data_path / path / "_fig2_exp2_curves"
+        #     fname = data_path / str(path + "_fig2_exp2_curves")
         #     save_data([beta_0,beta_testing,CCDF_tDx],fname)
 
-        fname = data_path / path / "_fig2"
+        fname = data_path / str(path + "_fig2")
         save_data(TEs,fname)
-        fname = data_path / path / "_fig2_Asc"
+        fname = data_path / str(path + "_fig2_Asc")
         save_data(Ascs,fname)
 def Draw_Fig2():
     COVID = read_data(data_path / "COVID_fig2")
@@ -347,11 +355,11 @@ def Draw_Fig2():
     plt.text(0.7,-.35,"Days since exposure",size=LABEL_SIZE,ha="center",va="center")
     plt.text(25.75,1,"Proportion of infections not yet detected",size=LABEL_SIZE,rotation=90,ha="center",va="center")
 
-    fname = fig_path / "Fig2.png"
+    fname = "Fig2.png"
     plt.savefig(fname,dpi=300,bbox_inches="tight")
-    fname = fig_path /  "Fig2.pdf"
+    fname = "Fig2.pdf"
     plt.savefig(fname,dpi=300,bbox_inches="tight")
-    # plt.show()
+    plt.show()
 
 def Draw_Fig2_supp_Asc():
     COVID = read_data(data_path / "COVID_fig2_Asc")
@@ -469,9 +477,9 @@ def Draw_Fig2_supp_Asc():
     plt.text(0.7,-.35,"Days since exposure",size=LABEL_SIZE,ha="center",va="center")
     plt.text(25.75,1,"Proportion of infections not yet detected",size=LABEL_SIZE,rotation=90,ha="center",va="center")
 
-    fname = fig_path / "Fig2Supp_Asc.png"
+    fname = "Fig2Supp_Asc.png"
     plt.savefig(fname,dpi=300,bbox_inches="tight")
-    fname = fig_path /  "Fig2Supp_Asc.pdf"
+    fname =  "Fig2Supp_Asc.pdf"
     plt.savefig(fname,dpi=300,bbox_inches="tight")
     plt.show()
 def Fig2_supp_curves_generate_data():
@@ -485,7 +493,7 @@ def Fig2_supp_curves_generate_data():
         # expt1 : 2 rapid tests at symptom onset ---------------------------------------------
         exp, n, w, tpd, LOD, TAT, p = get_expt1_params(pathogen)
         # Check to see if data exists
-        fname = data_path / pathogen / "_fig2_exp1_curves"
+        fname = data_path / str(pathogen + "_fig2_exp1_curves")
         if path.exists(fname+'.pkl'):
             print(fname," already exists. Skipping simulation.")
         # Otherwise, compute curves
@@ -508,7 +516,7 @@ def Fig2_supp_curves_generate_data():
         # expt2 : 1 PCR 2-7 days after exposure --------------------------------------------------
         exp, n, w, tpd, LOD, TAT, p = get_expt2_params(pathogen)
         # Check to see if data exists
-        fname = data_path / pathogen / "_fig2_exp2_curves"
+        fname = data_path / str(pathogen + "_fig2_exp2_curves")
         if path.exists(fname+'.pkl'):
             print(fname," already exists. Skipping simulation.")
         # Otherwise, compute curves
@@ -531,7 +539,7 @@ def Fig2_supp_curves_generate_data():
         # expt3 : weekly rapid testing ----------------------------------------------
         freq, LOD, TAT, p, c = get_expt3_params(pathogen)
         # Check to see if data exists
-        fname = data_path / pathogen / "_fig2_exp3_curves"
+        fname = data_path / str(pathogen + "_fig2_exp3_curves")
         if path.exists(fname+'.pkl'):
             print(fname," already exists. Skipping simulation.")
         # Otherwise, compute curves
@@ -586,7 +594,7 @@ def Draw_Fig2_supp_curves():
             ax = axes[axnum]
             colors = color_vector[col]
             # Read data
-            curve = read_data(data_path / pathogen / "_fig2_exp" / exp / "_curves")
+            curve = read_data(data_path / str(pathogen + "_fig2_exp" + exp + "_curves"))
             inf = curve[0]; resid = curve[1]; F = curve[2]
             t_vals = get_fig2_tvals(pathogen)
 
@@ -624,9 +632,9 @@ def Draw_Fig2_supp_curves():
 
             finalize(ax); finalize_keep_frame(ax2)
 
-    fname = fig_path / "Fig2supp_curves_nolabs.png"
+    fname = "Fig2supp_curves_nolabs.png"
     plt.savefig(fname,dpi=300,bbox_inches="tight")
-    fname = fig_path /  "Fig2supp_curves_nolabs.pdf"
+    fname =  "Fig2supp_curves_nolabs.pdf"
     plt.savefig(fname,dpi=300,bbox_inches="tight")
     plt.show()
 
@@ -672,7 +680,7 @@ def Fig4_generate_data():
             df_string = "wait" + str(w)
             df[df_string] = scenario_results
         # Save data
-        fname = data_path / path / "_fig4_symp"
+        fname = data_path / str(path +  "_fig4_symp")
         save_data(df,fname)
 
         # PCR post-symptom
@@ -689,7 +697,7 @@ def Fig4_generate_data():
             scenario_results.append(p*data['TE'].values[0])
         df = np.expand_dims(np.array(scenario_results), axis=0)
         # Save data
-        fname = data_path / path / "_fig4_symp_PCR"
+        fname = data_path / str(path + "_fig4_symp_PCR")
         save_data(df,fname)
 
     for path in pathogens:
@@ -719,7 +727,7 @@ def Fig4_generate_data():
             df_string = "wait" + str(w)
             df[df_string] = scenario_results
         # Save data
-        fname = data_path / path / "_fig4_exposure"
+        fname = data_path / str(path + "_fig4_exposure")
         save_data(df,fname)
 
         # PCR post-exposure
@@ -736,7 +744,7 @@ def Fig4_generate_data():
             scenario_results.append(p*data['TE'].values[0])
         df = np.expand_dims(np.array(scenario_results), axis=0)
         # Save data
-        fname = data_path / path / "_fig4_exposure_PCR"
+        fname = data_path / str(path + "_fig4_exposure_PCR")
         save_data(df,fname)
 def Draw_Fig4_symp():
     ''' Prompted testing with different wait times and number of daily tests '''
@@ -851,19 +859,16 @@ def Draw_Fig4_symp():
         finalize_keep_frame(a,aspect=4.75)
         a.set_yticks([1])
 
-    # axes["D"].text(5.25,6.25,"RDT tests\n0 day TAT",size=18,va="top",ha="right")
-    # axes["G"].text(5.25,1.25,"PCR, 2 day",size=18,va="top",ha="right")
-
     xlabpad = -0.15; ylabpad = 2.4;
     label_subplots(axes,x_pads=[xlabpad,xlabpad,xlabpad],y_pad=ylabpad,labels=["A","B","C"],fontsize=LABEL_SIZE)
     plt.subplots_adjust(hspace=-0.4) # space between rows
     plt.tight_layout
 
-    fname = fig_path / "Fig4.png"
+    fname = "Fig4.png"
     plt.savefig(fname,dpi=300,bbox_inches="tight") # bbox_inches prevents x-label from being cutoff
-    fname = fig_path / "Fig4.pdf"
+    fname = "Fig4.pdf"
     plt.savefig(fname,dpi=300,bbox_inches="tight")
-    # plt.show()
+    plt.show()
 def Draw_Fig4_exposure():
     ''' Prompted testing with different wait times and number of daily tests '''
 
@@ -985,11 +990,11 @@ def Draw_Fig4_exposure():
     plt.subplots_adjust(hspace=-0.4) # space between rows
     plt.tight_layout
 
-    fname = fig_path / "Fig4Supp_exposure.png"
+    fname = "Fig4Supp_exposure.png"
     plt.savefig(fname,dpi=300,bbox_inches="tight") # bbox_inches prevents x-label from being cutoff
-    fname = fig_path / "Fig4Supp_exposure.pdf"
+    fname = "Fig4Supp_exposure.pdf"
     plt.savefig(fname,dpi=300,bbox_inches="tight")
-    # plt.show()
+    plt.show()
 def Draw_Fig4_BandW():
     ''' Prompted testing with different wait times and number of daily tests '''
     ''' Heatmaps in black and white with values displayed'''
@@ -1108,11 +1113,11 @@ def Draw_Fig4_BandW():
     label_subplots(axes,x_pads=[xlabpad,xlabpad,xlabpad],y_pad=ylabpad,labels=["A","B","C"],fontsize=LABEL_SIZE)
     plt.subplots_adjust(hspace=-0.4) # space between rows
 
-    fname = fig_path / "Fig4Supp_BandW.png"
+    fname = "Fig4Supp_BandW.png"
     plt.savefig(fname,dpi=300,bbox_inches="tight") # bbox_inches prevents x-label from being cutoff
-    fname = fig_path / "Fig4Supp_BandW.pdf"
+    fname = "Fig4Supp_BandW.pdf"
     plt.savefig(fname,dpi=300,bbox_inches="tight")
-    # plt.show()
+    plt.show()
 
 def Fig4Supp_generate_data_Asc():
     ''' TE heatmap for symptom based and exposure based reflex testing '''
@@ -1156,7 +1161,7 @@ def Fig4Supp_generate_data_Asc():
             df_string = "wait" + str(w)
             df[df_string] = scenario_results
         # Save data
-        fname = data_path / path / "_fig4_symp_Asc"
+        fname = data_path / str(path + "_fig4_symp_Asc")
         save_data(df,fname)
 
         # PCR post-symptom
@@ -1173,7 +1178,7 @@ def Fig4Supp_generate_data_Asc():
             scenario_results.append(p*data['ascertainment'].values[0])
         df = np.expand_dims(np.array(scenario_results), axis=0)
         # Save data
-        fname = data_path / path / "_fig4_symp_PCR_Asc"
+        fname = data_path / str(path + "_fig4_symp_PCR_Asc")
         save_data(df,fname)
 def Draw_Fig4Supp_Asc():
     ''' Prompted testing with different wait times and number of daily tests '''
@@ -1293,11 +1298,11 @@ def Draw_Fig4Supp_Asc():
     label_subplots(axes,x_pads=[xlabpad,xlabpad,xlabpad],y_pad=ylabpad,labels=["A","B","C"],fontsize=LABEL_SIZE)
     plt.subplots_adjust(hspace=-0.4) # space between rows
 
-    fname = fig_path / "Fig4Supp_Asc.png"
+    fname = "Fig4Supp_Asc.png"
     plt.savefig(fname,dpi=300,bbox_inches="tight") # bbox_inches prevents x-label from being cutoff
-    fname = fig_path / "Fig4Supp_Asc.pdf"
+    fname = "Fig4Supp_Asc.pdf"
     plt.savefig(fname,dpi=300,bbox_inches="tight")
-    # plt.show()
+    plt.show()
 
 def Fig5_generate_data():
     # Comparing [2x weekly, weekly, symp-based] screening with [low sens 0 day TAT, high sense 2 day TAT]
@@ -1337,7 +1342,7 @@ def Fig5_generate_data():
             raise Exception("You didn't query me enough :(")
         TE.append(p*data['TE'].values[0])
         # save data
-        fname = data_path / path / "_fig5_LOD" / str(LOD)
+        fname = data_path / str(path + "_fig5_LOD" + str(LOD))
         save_data(TE,fname)
 
     # wildtype
@@ -1370,7 +1375,7 @@ def Fig5_generate_data():
             raise Exception("You didn't query me enough :(")
         TE.append(p*data['TE'].values[0])
         # Save data
-        fname = data_path / path / "_fig5_LOD" / str(LOD)
+        fname = data_path / str(path + "_fig5_LOD" + str(LOD))
         save_data(TE,fname)
 def Draw_Fig5():
     om_data_highsens = read_data(data_path / "COVID_fig5_LOD3")
@@ -1461,9 +1466,9 @@ def Draw_Fig5():
     plt.subplots_adjust(wspace=10, # space between cols
                     hspace=0.4 ) # space between rows
     
-    fname = fig_path / "Fig5_nolabs.png"
+    fname = "Fig5_nolabs.png"
     plt.savefig(fname,dpi=300)
-    fname = fig_path / "Fig5_nolabs.pdf"
+    fname = "Fig5_nolabs.pdf"
     plt.savefig(fname,dpi=300)
     plt.show()
 
@@ -1511,7 +1516,7 @@ def Fig6_generate_data():
 
     # Histogram - read from montecarlo simulation data
     hash = "2850778d294e8334637990ab7ee1340735b5d56b3cc50a9ff1590293a4501432"
-    data = pd.read_csv(sim_path / hash / ".zip")
+    data = pd.read_csv(str(sim_path / hash) + ".zip")
     data = data.loc[data['tDx'] < 40] # disregard infinite time entries - those that are never detected
     durations = data['tExit'] - data['tDx']
     fname = data_path / "Fig6_histogram"
@@ -1579,11 +1584,11 @@ def Draw_Fig6():
     label_subplots(axes,x_pads=[0.05,0.05,0.05,0.025],y_pad=1.05,labels=["A","B","C","D"],fontsize=LABEL_SIZE)
 
     plt.tight_layout()
-    fname = fig_path / "Fig6.png"
+    fname = "Fig6.png"
     plt.savefig(fname,dpi=300)
-    fname = fig_path / "Fig6.pdf"
+    fname = "Fig6.pdf"
     plt.savefig(fname,dpi=300)
-    # plt.show()
+    plt.show()
 
 def VL_samples():
     ''' Plot viral trajectories of COVID, RSV, and FLU with LODs '''
@@ -1701,9 +1706,9 @@ def VL_samples():
 
     plt.tight_layout()
     
-    fname = fig_path / "viral_trajectories.png"
+    fname = "viral_trajectories.png"
     plt.savefig(fname,dpi=300)
-    fname = fig_path / "viral_trajectories.pdf"
+    fname = "viral_trajectories.pdf"
     plt.savefig(fname,dpi=300)
     plt.show()
 def VL_maintext():
@@ -1853,94 +1858,11 @@ def VL_maintext():
 
     plt.tight_layout()
     
-    fname = fig_path / "viral_kinetics_maintext.png"
+    fname = "viral_kinetics_maintext.png"
     plt.savefig(fname,dpi=300)
-    fname = fig_path / "viral_kinetics_maintext.pdf"
+    fname = "viral_kinetics_maintext.pdf"
     plt.savefig(fname,dpi=300)
     plt.show()
-
-def jitter_plots():
-    # Panel B - jitter plots
-    omicron_6 = sim_path / '18b20679510954da24bcd0e58f73cf33ce101900b8d3bb0e9bc45738edba5a86.zip'
-    founder_5 = sim_path / '9fac1f6ad22a116191d6a8ea4b8cb4332bbde2512b5df3a30d2b6b5afbf839df.zip'
-    files = [founder_5,omicron_6]
-    N = 1000
-    ax = axes['L']
-    ymax = 16
-
-    np.random.seed(42)
-    w = 0.7
-    hw = 0.7/2
-    jitter = (np.random.rand(int(1e5))-0.5)*w
-    labels = ['Founder\nnaive','Omicron\nexp.']
-    colors = [COVID_colors[3],COVID_colors[5]] # founder, omicron
-    for idx,file in enumerate(files):
-        df = pd.read_csv(file)
-        data = df['last'].values - df['first'].values
-        data = data[data<=ymax]
-        ax.scatter(idx+jitter[:N],data[:N],20,
-                color=colors[idx],
-                alpha=0.25,
-                clip_on=False,
-                zorder=3)
-        ax.plot([idx-hw,idx+hw],[np.median(data)]*2,
-                lw=2,color='k',zorder=4)
-        [m,M] = np.quantile(data,[0.25,0.75])
-        rect = Rectangle((idx-hw,m),w,M-m,linewidth=1,edgecolor='k',facecolor='none',zorder=4,clip_on=False)
-        ax.add_patch(rect)
-        IQR = M-m
-        high = np.min([M+1.5*IQR,np.max(data)])
-        low = np.max([m-1.5*IQR,np.min(data)])
-        ax.plot([idx]*2,[M,high],'k',zorder=4,clip_on=False)
-        ax.plot([idx-hw/2,idx+hw/2],[high,high],'k',zorder=4,clip_on=False)
-        ax.plot([idx]*2,[m,low],'k',zorder=4,clip_on=False)
-        ax.plot([idx-hw/2,idx+hw/2],[low,low],'k',zorder=4,clip_on=False)
-    ax.set_ylabel('Days detectable by RDT')
-    ax.set_ylim([0,ymax])
-    ax.set_xlim([0-w,1+w])
-    ax.set_yticks(np.arange(0,ymax+0.1,2))
-    ax.set_xticks([0,1])
-    ax.set_xticklabels(labels)
-
-    ax = axes['M']
-    ymax = 10
-    for idx,file in enumerate(files):
-        df = pd.read_csv(file)
-        data = df['first'].values-df['A'].values
-        data = data[data>0]
-        data = data[data<=ymax]
-        ax.scatter(idx+jitter[:N],data[:N],20,
-                color=colors[idx],
-                alpha=0.25,
-                clip_on=False,zorder=3)
-        ax.plot([idx-hw,idx+hw],[np.median(data)]*2,
-                lw=2,color='k',zorder=4)
-        [m,M] = np.quantile(data,[0.25,0.75])
-        rect = Rectangle((idx-hw,m),w,M-m,linewidth=1,edgecolor='k',facecolor='none',zorder=4,clip_on=False)
-        ax.add_patch(rect)
-        IQR = M-m
-        high = np.min([M+1.5*IQR,np.max(data)])
-        low = np.max([m-1.5*IQR,np.min(data)])
-        ax.plot([idx]*2,[M,high],'k',zorder=4,clip_on=False)
-        ax.plot([idx-hw/2,idx+hw/2],[high,high],'k',zorder=4,clip_on=False)
-        ax.plot([idx]*2,[m,low],'k',zorder=4,clip_on=False)
-        ax.plot([idx-hw/2,idx+hw/2],[low,low],'k',zorder=4,clip_on=False)
-    ax.set_ylabel(r'$\Delta$LOD/m (days)',labelpad=-7)
-    ax.set_ylim([0,ymax])
-    ax.set_yticks(np.arange(0,ymax+0.1,2))
-    ax.set_xlim([0-w,1+w])
-    ax.set_xticks([0,1])
-    xx = ax.get_xlim()
-    yy = ax.get_ylim()
-    rect = Rectangle((xx[0],yy[0]),xx[1]-xx[0],np.abs(yy[0])+2,linewidth=0,facecolor='k',alpha=0.1,zorder=1)
-    ax.add_patch(rect)
-    ax.plot(xx,[2,2],c=[0.3,0.3,0.3],ls='--',zorder=2)
-    ax.set_xticklabels(labels)
-    ax.text(xx[1]-0.03,1,r'$\Delta$TAT',rotation=90,ha='right',va='center',c=[0.3,0.3,0.3])
-    ax.annotate("", xy=(xx[1], 2), xytext=(xx[1], 0),
-                arrowprops=dict(arrowstyle="<->",color=[0.3,0.3,0.3]))
-    
-    finalize(axes['L']); finalize(axes['M'])
 
 # Sensitivity analysis supplementary figures
 def get_sensitivity_scenario_LOD(pathogen,LOD_scenario):
@@ -2085,9 +2007,9 @@ def sensitivity_Draw_Fig2():
     axes["A"].legend([a,b,c],["RSV","Influenza A","SARS-CoV-2"],loc='upper left',frameon = True)
     plt.tight_layout()
 
-    fname = fig_path / "Fig2_sensitivity_nolabs.png"
+    fname = "Fig2_sensitivity_nolabs.png"
     plt.savefig(fname,dpi=300,bbox_inches="tight")
-    fname = fig_path /  "Fig2_sensitivity_nolabs.pdf"
+    fname =  "Fig2_sensitivity_nolabs.pdf"
     plt.savefig(fname,dpi=300,bbox_inches="tight")
     plt.show()
 

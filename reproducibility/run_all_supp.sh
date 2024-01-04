@@ -1,7 +1,7 @@
 #!/bin/bash
-python src/experiment.py ../input/figureS1A.yaml
-python src/experiment.py ../input/figureS1Apcr.yaml
-python src/experiment.py ../input/figureS1B.yaml
-python src/experiment.py ../input/figureS1Bpcr.yaml
-python src/experiment.py ../input/figureS1C.yaml
-python src/experiment.py ../input/figureS1Cpcr.yaml
+python src/experiment.py ../input/figure4ASupp_exposure.yaml
+python src/experiment.py ../input/figure4ASupp_exposurepcr.yaml
+python src/experiment.py ../input/figure4BSupp_exposure.yaml
+python src/experiment.py ../input/figure4BSupp_exposurepcr.yaml
+python src/experiment.py ../input/figure4CSupp_exposure.yaml
+python src/experiment.py ../input/figure4CSupp_exposurepcr.yaml
