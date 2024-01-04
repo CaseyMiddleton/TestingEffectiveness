@@ -1,5 +1,5 @@
 # Calculating Testing Effectiveness (TE)
-The purpose of this code is to rapidly perform estimates of Testing Effectiveness, ascertainment, test consumption, and isolation days, for a variety of pathogens, diagnostics, and testing scenarios. Requirements, installation, and examples can be found below.
+The purpose of this code is to rapidly perform estimates of Testing Effectiveness, ascertainment, test consumption, and isolation days, for a variety of pathogens, diagnostics, and testing scenarios as described in [Modeling the Transmission Mitigation Impact of Testing for Infectious Diseases](https://doi.org/10.1101/2023.09.22.23295983). Requirements, installation, and examples can be found below.
 
 The code reads its inputs from a `.yaml` parameter file, and writes each ensemble of Monte Carlo simulations to a single `.csv.zip`, which is summarized in a single line `csv`. 
 
