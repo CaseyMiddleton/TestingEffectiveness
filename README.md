@@ -32,7 +32,7 @@ This will run the experiment detailed in `example_1.yaml`, investigating daily u
 1. starting at symptoms
 2. starting at symptoms + 1d 
 3. starting at symptoms + 2d
-with 10,000 draws each. For each condition, the draws will be stored in a `.csv.zip` file. The summary of all three conditions will be stored in `example_1.csv`. From these, we should learn that testing effectiveness (TE) is approximately  60%, 32%, and 6% for each of those conditions, respectively. 
+with 10,000 draws each. For each condition, the draws will be stored in a `.csv.zip` file. The summary of all three conditions will be stored in `example_1.csv`. From these, we should learn that testing effectiveness (TE) is approximately  67%, 42%, and 15% for each of those conditions, respectively. 
 
 Note that running the same code again will avoid re-running the Monte Carlo draws, whose outcomes remain stored in the `.zip` files. Instead, the code will recognize that the simulations have already been done, and will simply read in the results and summarize them in the summary `.csv`.
 

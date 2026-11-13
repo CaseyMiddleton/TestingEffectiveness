@@ -33,7 +33,7 @@ def kinetics_flu():
     
     t_latent = np.random.uniform(0.5,1.5)
     dt_proliferation = np.random.uniform(1,3)
-    dt_clearance = np.random.uniform(2,3)
+    dt_clearance = np.random.uniform(2,5)
     t_peak = t_latent + dt_proliferation
     t_clearance = t_peak + dt_clearance    
     t_Sx = t_peak + np.random.uniform(-2,0)
